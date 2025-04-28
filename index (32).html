@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Game Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 0;
+      background: #121212;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+    }
+    header {
+      background: #1f1f1f;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+    .lang-select {
+      padding: 8px 12px;
+      font-size: 14px;
+      background: #333;
+      color: #e0e0e0;
+      border: none;
+      border-radius: 4px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 30px auto;
+      padding: 20px;
+      background: #1f1f1f;
+      border-radius: 8px;
+    }
+    .search-box {
+      display: flex;
+      gap: 10px;
+    }
+    .search-box input {
+      flex: 1;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #333;
+      border-radius: 4px;
+      background: #2b2b2b;
+      color: #e0e0e0;
+    }
+    .search-box button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #ff6600;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .search-box button:hover {
+      background: #e65500;
+    }
+    #results {
+      margin-top: 30px;
+    }
+    .result-link {
+      display: block;
+      margin: 10px 0;
+      color: #00c3ff;
+      text-decoration: none;
+      font-size: 18px;
+    }
+    .result-link:hover {
+      text-decoration: underline;
+    }
+    #topGames {
+      margin-top: 40px;
+      border-top: 1px solid #333;
+      padding-top: 20px;
+    }
+    #topGames h2 {
+      margin: 0 0 10px;
+      font-size: 20px;
+      text-align: center;
+      color: #4fc3f7;
+    }
+    .top-list {
+      list-style: none;
+      padding: 0;
+    }
+    .top-list li {
+      margin: 10px 0;
+    }
+    .top-list .result-link {
+      font-size: 16px;
+    }
+    footer {
+      text-align: center;
+      padding: 15px 0;
+      background: #1f1f1f;
+      color: #777;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1 id="siteTitle">Game Portal</h1>
+    <select id="langSelect" class="lang-select" onchange="changeLanguage()">
+      <option value="en">English</option>
+      <option value="ar">العربية</option>
+      <option value="es">Español</option>
+      <option value="fr">Français</option>
+    </select>
+  </header>
+
+  <div class="container">
+    <div class="search-box">
+      <input type="text" id="gameSearch" placeholder="Search for a game…">
+      <button id="searchBtn" onclick="searchGame()">Search</button>
+    </div>
+    <div id="results"></div>
+
+    <div id="topGames">
+      <h2 id="topTitle">Top 3 Games</h2>
+      <ul id="topList" class="top-list"></ul>
+    </div>
+  </div>
+
+  <footer>
+    <p id="contactText">Contact: sasasasa0n2@gmail.com</p>
+    <p>© 2025 Game Portal</p>
+  </footer>
+
+  <script>
+    const translations = {
+      en: {
+        siteTitle:    "Game Portal",
+        placeholder:  "Search for a game…",
+        searchButton: "Search",
+        contactText:  "Contact: sasasasa0n2@gmail.com",
+        watchTrailer: name => `Watch "${name}" Trailer on YouTube`,
+        downloadLink: name => `Download "${name}" from FitGirl`,
+        notFound:     "No games found.",
+        topTitle:     "Top 3 Games"
+      },
+      ar: {
+        siteTitle:    "بوابة الألعاب",
+        placeholder:  "ابحث عن لعبة…",
+        searchButton: "بحث",
+        contactText:  "للتواصل: sasasasa0n2@gmail.com",
+        watchTrailer: name => `شاهد تريلر "${name}" على يوتيوب`,
+        downloadLink: name => `تحميل "${name}" من FitGirl`,
+        notFound:     "لم يتم العثور على نتائج.",
+        topTitle:     "أفضل ثلاث ألعاب"
+      },
+      es: {
+        siteTitle:    "Portal de juegos",
+        placeholder:  "Buscar un juego…",
+        searchButton: "Buscar",
+        contactText:  "Contacto: sasasasa0n2@gmail.com",
+        watchTrailer: name => `Ver tráiler de "${name}" en YouTube`,
+        downloadLink: name => `Descargar "${name}" de FitGirl`,
+        notFound:     "No se encontraron resultados.",
+        topTitle:     "Top 3 Juegos"
+      },
+      fr: {
+        siteTitle:    "Portail de jeux",
+        placeholder:  "Rechercher un jeu…",
+        searchButton: "Rechercher",
+        contactText:  "Contact: sasasasa0n2@gmail.com",
+        watchTrailer: name => `Voir la bande-annonce de "${name}" sur YouTube`,
+        downloadLink: name => `Télécharger "${name}" depuis FitGirl`,
+        notFound:     "Aucun résultat trouvé.",
+        topTitle:     "Top 3 Jeux"
+      }
+    };
+
+    let currentLang = "en";
+    const topGames = ["Minecraft", "GTA V", "Cyberpunk 2077"];
+
+    function changeLanguage() {
+      currentLang = document.getElementById("langSelect").value;
+      const t = translations[currentLang];
+      document.getElementById("siteTitle").innerText    = t.siteTitle;
+      document.getElementById("gameSearch").placeholder = t.placeholder;
+      document.getElementById("searchBtn").innerText    = t.searchButton;
+      document.getElementById("contactText").innerText  = t.contactText;
+      document.getElementById("topTitle").innerText     = t.topTitle;
+      document.getElementById("results").innerHTML      = "";
+      renderTopGames();
+    }
+
+    function searchGame() {
+      const name = document.getElementById("gameSearch").value.trim();
+      const resultsDiv = document.getElementById("results");
+      resultsDiv.innerHTML = "";
+      if (!name) return;
+
+      const t = translations[currentLang];
+      const ytURL = "https://www.youtube.com/results?search_query=" 
+                    + encodeURIComponent(name + " trailer");
+      const fgURL = "https://fitgirl-repacks.site/?s=" 
+                    + encodeURIComponent(name);
+
+      const trailerLink  = document.createElement("a");
+      trailerLink.href   = ytURL;
+      trailerLink.target = "_blank";
+      trailerLink.className = "result-link";
+      trailerLink.innerText = t.watchTrailer(name);
+
+      const downloadLink = document.createElement("a");
+      downloadLink.href   = fgURL;
+      downloadLink.target = "_blank";
+      downloadLink.className = "result-link";
+      downloadLink.innerText = t.downloadLink(name);
+
+      resultsDiv.appendChild(trailerLink);
+      resultsDiv.appendChild(downloadLink);
+    }
+
+    function renderTopGames() {
+      const topList = document.getElementById("topList");
+      topList.innerHTML = "";
+      const t = translations[currentLang];
+      topGames.forEach(name => {
+        const li = document.createElement("li");
+        const trailerLink  = `<a class="result-link" href="https://www.youtube.com/results?search_query=${encodeURIComponent(name+' trailer')}" target="_blank">${t.watchTrailer(name)}</a>`;
+        const downloadLink = `<a class="result-link" href="https://fitgirl-repacks.site/?s=${encodeURIComponent(name)}" target="_blank">${t.downloadLink(name)}</a>`;
+        li.innerHTML = trailerLink + downloadLink;
+        topList.appendChild(li);
+      });
+    }
+
+    // initialize
+    changeLanguage();
+  </script>
+
+</body>
+</html>
